@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+   <meta charset="utf-8">
+   <title>Facebook API</title>
+   <style>
+     #fb-btn , #logout{
+       display: none;
+     }
+
+      /* Always set the map height explicitly to define the size of the div
+       * element that contains the map. */
+       #map {
+        height: 100%;
+      }
+      /* Optional: Makes the sample page fill the window. */
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+   </style>
+   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+</head>
+
+<body>
+   
+<script>
+ window.fbAsyncInit = function() {
+   FB.init({
+     appId      : '813381409109563', // your app id
+     cookie     : true,
+     xfbml      : true,
+     version    : 'v5.0' // graph api version in this case is v2.12
+   });
+     
+   FB.getLoginStatus(function(response) {
+           statusChangeCallback(response);
+       });
+     
+ };
+
+ (function(d, s, id){
+    var js, fjs = d.getElementsByTagName(s)[0];
+    if (d.getElementById(id)) {return;}
+    js = d.createElement(s); js.id = id;
+    js.src = "https://connect.facebook.net/en_US/sdk.js";
+    fjs.parentNode.insertBefore(js, fjs);
+  }(document, 'script', 'facebook-jssdk'));
+
+ function statusChangeCallback(response) {
+       if (response.status === "connected") {
+           console.log("Logged in and authenticated");
+           setElements(true);
+           graphAPI();
+       } else {
+           console.log("Not authenticated");
+           setElements(false);
+       }
+   }
+
+   function checkLoginState() {
+       FB.getLoginStatus(function(response) {
+           statusChangeCallback(response);
+       });
+   }
+
+   function setElements(isLoggedIn){
+     if(isLoggedIn){
+       document.getElementById('fb-btn').style.display = 'none';
+       document.getElementById('logout').style.display = 'block';
+     } else {
+       document.getElementById('fb-btn').style.display = 'block';
+       document.getElementById('logout').style.display = 'none';
+     }
+   }
+
+   function logout(){
+     FB.logout(function(response){
+       setElements(false);
+     })
+   }
+
+   function graphAPI(){
+     FB.api("me?fields=id,name,email" , function(response){
+       if(response && !response.error){
+         console.log(response);
+       }
+     })
+   }
+
+</script>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <fb:login-button 
+     id="fb-btn"
+     scope="public_profile,email"
+     onlogin="checkLoginState();">
+   </fb:login-button>
+      
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav mr-auto">
+            <li class="nav-item active">
+              <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">Link</a>
+            </li>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Dropdown
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <a class="dropdown-item" href="#">Action</a>
+                <a class="dropdown-item" href="#">Another action</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" href="#">Something else here</a>
+              </div>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#" tabindex="-1" aria-disabled="true">Google Maps</a>
+            </li>
+          </ul>
+          
+        </div>
+      </nav>
+   
+   <a id="logout" onclick="logout()" href="#">Logout</a>
+
+   <div id="map"></div>
+    <script>
+      var map;
+      function initMap() {
+        map = new google.maps.Map(document.getElementById('map'), {
+          center: {lat: -34.397, lng: 150.644},
+          zoom: 8
+        });
+      }
+    </script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBtjaD-saUZQ47PbxigOg25cvuO6_SuX3M&callback=initMap"
+    async defer></script>
+</body>
+
+</html>
